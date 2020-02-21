@@ -31,4 +31,6 @@ aws emr create-cluster \
 *注：AWS Glue 是一种完全托管的服务，提供数据目录以使数据湖中的数据可被发现，并且能够执行提取、转换和加载 (ETL) 以准备数据进行分析。数据目录会自动创建为所有数据资产的持久元数据存储，支持在一个视图中搜索和查询所有数据。数据湖是一个集中式存储库，允许以任意规模存储所有结构化和非结构化数据，数据可以按原样进行存储（无需将其转换为预先定义的数据结构）。在数据湖之上可以运行不同类型的分析 – 从控制面板和可视化到大数据处理、实时分析和机器学习，以指导做出更好的决策。
 
 *注：如果使用Glue作为Spark的数据目录，需要在AWS Lake Formation给EMR集群节点角色（示例是EMR_EC2_DefaultRole）授权可以创建数据库(Database creators)，否则在使用Spark构建Cube或者使用Spark SQL时都会报以下错误。
+```
 org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Insufficient Lake Formation permission(s) on global_temp (Service: AWSGlue; Status Code: 400; Error Code: AccessDeniedException; Request ID: ***))
+```
