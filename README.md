@@ -5,24 +5,25 @@
 
 ```
 aws emr create-cluster \
---name "kylin emr global glue" \
+--name <replace with your cluster name> \
 --release-label emr-5.29.0 \
 --applications Name=Hadoop Name=Hive Name=HBase Name=Spark \
 --use-default-roles \
 --auto-scaling-role EMR_AutoScaling_DefaultRole \
---ec2-attributes KeyName=aws-us-east-1 \
+--ec2-attributes KeyName=<replace with your ssh key> \
 --instance-type m5.xlarge \
 --instance-count 3 \
 --enable-debugging \
---log-uri s3://kylin-shtian/myLog \
+--log-uri <replace with s3 bucket for cluster logging> \
 --configurations '[{"Classification":"hive-site","Properties":{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}}]' \
---steps Type=CUSTOM_JAR,Name=CustomJAR,ActionOnFailure=CONTINUE,Jar=s3://us-east-1.elasticmapreduce/libs/script-runner/script-runner.jar,Args=["s3://kylin-shtian/install/kylin-on-emr.sh","3.1.0-SNAPSHOT","global","glue"]
+--steps Type=CUSTOM_JAR,Name=CustomJAR,ActionOnFailure=CONTINUE,Jar=s3:// <replace with your region>.elasticmapreduce/libs/script-runner/script-runner.jar,Args=["<replace with your script kylin-on-emr.sh s3 location>","<Kylin version>","<location>","<whether use Glue as Hive metastore>"]
+
 ```
 
 目前脚本接收3个参数（后续会逐渐规范化脚本）：
 * 第一个参数是Kylin的版本如"3.0.0"、"2.6.5"等；
 * 第二个参数是所在的区域，可以填写"cn"或者是"global"，脚本会根据不同区域选择不同的Kylin下载源；
-* 第三个参数是是否使用AWS Glue作为Hive的metastore，可以设置的值为"glue"或者留空，如果使用Glue，第一个参数需要修改为"3.1.0-SNAPSHOT"。
+* 第三个参数是是否使用AWS Glue作为Hive的metastore，可以设置的值为"glue"或者留空。如果不使用Glue，则无需添加上述AWS CLI中的configurations配置选项；如果使用Glue，第一个参数需要修改为"3.1.0-SNAPSHOT"，并且需要添加如上命令的EMR配置。
 
 *注：以上脚本使用基于HBase1x 的Apache Kylin v3.0.0和v2.6.5在美国东部 (弗吉尼亚北部) us-east-1的EMR 5.29.0版本中测试通过，如果使用其他Apache Kylin在EMR 版本根据实际情况可能需要微调。
 
