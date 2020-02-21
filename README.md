@@ -17,7 +17,6 @@ aws emr create-cluster \
 --log-uri <replace with s3 bucket for cluster logging> \
 --configurations '[{"Classification":"hive-site","Properties":{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}},{"Classification":"spark-hive-site","Properties":{"hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"}}]' \
 --steps Type=CUSTOM_JAR,Name=CustomJAR,ActionOnFailure=CONTINUE,Jar=s3:// <replace with your region>.elasticmapreduce/libs/script-runner/script-runner.jar,Args=["<replace with your script kylin-on-emr.sh s3 location>","<Kylin version>","<location>","<whether use Glue as Hive metastore>"]
-
 ```
 
 目前脚本接收3个参数（后续会逐渐规范化脚本）：
@@ -30,3 +29,6 @@ aws emr create-cluster \
 *注：基于HBase1x 的Apache Kylin 3.1.0-SNAPSHOT版本在美国东部 (弗吉尼亚北部) us-east-1的EMR 5.29.0版本中测试通过。该版本是根据Apache Kylin目前GitHub源码进行修改后进行编译打包的版本，仅供测试使用，官方版本需要等待3.1.0版本的正式发布。
 
 *注：AWS Glue 是一种完全托管的服务，提供数据目录以使数据湖中的数据可被发现，并且能够执行提取、转换和加载 (ETL) 以准备数据进行分析。数据目录会自动创建为所有数据资产的持久元数据存储，支持在一个视图中搜索和查询所有数据。数据湖是一个集中式存储库，允许以任意规模存储所有结构化和非结构化数据，数据可以按原样进行存储（无需将其转换为预先定义的数据结构）。在数据湖之上可以运行不同类型的分析 – 从控制面板和可视化到大数据处理、实时分析和机器学习，以指导做出更好的决策。
+
+*注：如果使用Glue作为Spark的数据目录，需要在AWS Lake Formation给EMR集群节点角色（示例是EMR_EC2_DefaultRole）授权可以创建数据库(Database creators)，否则在使用Spark构建Cube或者使用Spark SQL时都会报以下错误。
+org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Insufficient Lake Formation permission(s) on global_temp (Service: AWSGlue; Status Code: 400; Error Code: AccessDeniedException; Request ID: ***))
