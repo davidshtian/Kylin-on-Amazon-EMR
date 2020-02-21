@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
+# Get script args
 VERSION=$1
-
 LOCATION=$2
 
+# Set basic variables used in this script
 KYLIN_HOME=/usr/local/kylin/apache-kylin-$VERSION-bin-hbase1x
 HIVE_HOME=/usr/lib/hive
 SPARK_HOME=/usr/lib/spark
 HBASE_HOME=/usr/lib/hbase
-
 HOSTNAME=`hostname`
 
 # Download and install Kylin
@@ -17,6 +17,7 @@ sudo mkdir -p /usr/local/kylin
 sudo chown hadoop /usr/local/kylin
 cd /usr/local/kylin
 
+# Choose software URL based on the version and location
 if [ $VERSION = "3.1.0-SNAPSHOT" ];then
 wget http://d6zijbkibsp09.cloudfront.net/shtian/apache-kylin-3.1.0-SNAPSHOT-bin-hbase1x.tar.gz
 elif [ $LOCATION = "cn" ];then
@@ -25,6 +26,7 @@ elif [ $LOCATION = "global" ];then
 wget http://us.mirrors.quenda.co/apache/kylin/apache-kylin-$VERSION/apache-kylin-$VERSION-bin-hbase1x.tar.gz
 fi
 
+# Unarchive the tarball
 tar -zxvf apache-kylin-$VERSION-bin-hbase1x.tar.gz
 
 # Modify Kylin HBase configuration
@@ -52,6 +54,7 @@ export PATH=$KYLIN_HOME/bin:$PATH
 export hive_dependency=$HIVE_HOME/conf:$HIVE_HOME/lib/*:$HIVE_HOME/lib/hive-hcatalog-core*.jar:/usr/share/aws/hmclient/lib/*:$SPARK_HOME/jars/*:$HBASE_HOME/lib/*.jar:$HBASE_HOME/*.jar
 EOF
 
+# Source the env
 source ~/.bashrc
 
 # Solve jar conflict - Remove joda.jar
