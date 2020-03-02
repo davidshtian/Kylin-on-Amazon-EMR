@@ -86,9 +86,7 @@ cp /usr/lib/spark/jars/scala-library-* $KYLIN_HOME/tomcat/lib/
 
 # Configure if Glue is used as Hive Metadata store
 if [ $3 = "glue" ];then
-cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-client-common-*.jar $KYLIN_HOME/lib
-cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-hive2-client-*.jar $KYLIN_HOME/lib
-cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-spark-client-*.jar $KYLIN_HOME/lib
+cp -d /usr/share/aws/hmclient/lib/aws-glue-datacatalog-*.jar $KYLIN_HOME/lib
 
 cat >> $KYLIN_HOME/conf/kylin.properties << EOF
 kylin.source.hive.metadata-type=gluecatalog
