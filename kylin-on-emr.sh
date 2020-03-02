@@ -18,13 +18,17 @@ sudo chown hadoop /usr/local/kylin
 cd /usr/local/kylin
 
 # Choose software URL based on the version and location
-if [ $VERSION = "3.1.0-SNAPSHOT" ];then
-wget http://d6zijbkibsp09.cloudfront.net/shtian/apache-kylin-3.1.0-SNAPSHOT-bin-hbase1x.tar.gz
-elif [ $LOCATION = "cn" ];then
-wget http://mirror.bit.edu.cn/apache/kylin/apache-kylin-$VERSION/apache-kylin-$VERSION-bin-hbase1x.tar.gz
+if [ $LOCATION = "cn" ];then
+KYLIN_TAR=http://mirror.bit.edu.cn/apache/kylin/apache-kylin-$VERSION/apache-kylin-$VERSION-bin-hbase1x.tar.gz
 elif [ $LOCATION = "global" ];then
-wget http://us.mirrors.quenda.co/apache/kylin/apache-kylin-$VERSION/apache-kylin-$VERSION-bin-hbase1x.tar.gz
+KYLIN_TAR=http://us.mirrors.quenda.co/apache/kylin/apache-kylin-$VERSION/apache-kylin-$VERSION-bin-hbase1x.tar.gz
 fi
+
+if [ $VERSION = "3.1.0-SNAPSHOT" ];then
+KYLIN_TAR=http://d6zijbkibsp09.cloudfront.net/shtian/apache-kylin-3.1.0-SNAPSHOT-bin-hbase1x.tar.gz
+fi
+
+wget $KYLIN_TAR
 
 # Unarchive the tarball
 tar -zxvf apache-kylin-$VERSION-bin-hbase1x.tar.gz
@@ -86,11 +90,18 @@ cp /usr/lib/spark/jars/scala-library-* $KYLIN_HOME/tomcat/lib/
 
 # Configure if Glue is used as Hive Metadata store
 if [ $3 = "glue" ];then
-cp -d /usr/share/aws/hmclient/lib/aws-glue-datacatalog-*.jar $KYLIN_HOME/lib
+cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-client-common-*.jar $KYLIN_HOME/lib
+cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-hive2-client-*.jar $KYLIN_HOME/lib
+cp /usr/share/aws/hmclient/lib/aws-glue-datacatalog-spark-client-*.jar $KYLIN_HOME/lib
 
 cat >> $KYLIN_HOME/conf/kylin.properties << EOF
 kylin.source.hive.metadata-type=gluecatalog
 EOF
+fi
+
+# Fix for China regions
+if [ $LOCATION = "cn" ];then
+cp -d /usr/share/aws/hmclient/lib/aws-glue-datacatalog-*.jar $KYLIN_HOME/lib
 fi
 
 # Start Kylin
