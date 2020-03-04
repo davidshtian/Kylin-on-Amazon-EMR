@@ -1,6 +1,8 @@
 # Kylin-on-Amazon-EMR
 快速在Amazon EMR集群中部署Apache Kylin。
 
+AWS Blog：https://amazonaws-china.com/cn/blogs/china/data-rubiks-cube-quickly-deploy-apache-kylin-for-big-data-analysis-on-amazon-emr/
+
 通过脚本kylin-on-emr.sh可以在EMR集群中通过步骤的方式快速地完成Kylin的部署，可以使用如下的AWS CLI命令进行一键安装：
 
 ```
